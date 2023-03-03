@@ -1,0 +1,3488 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "e41a3fd0",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:11.691468Z",
+     "iopub.status.busy": "2022-08-08T11:38:11.690793Z",
+     "iopub.status.idle": "2022-08-08T11:38:11.705897Z",
+     "shell.execute_reply": "2022-08-08T11:38:11.704685Z"
+    },
+    "papermill": {
+     "duration": 0.037738,
+     "end_time": "2022-08-08T11:38:11.708677",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:11.670939",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "530c937c",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:11.745056Z",
+     "iopub.status.busy": "2022-08-08T11:38:11.744661Z",
+     "iopub.status.idle": "2022-08-08T11:38:11.802640Z",
+     "shell.execute_reply": "2022-08-08T11:38:11.801451Z"
+    },
+    "papermill": {
+     "duration": 0.080316,
+     "end_time": "2022-08-08T11:38:11.805199",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:11.724883",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data = pd.read_csv('../input/bengaluru-house-price-data/Bengaluru_House_Data.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "466f4e58",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:11.840082Z",
+     "iopub.status.busy": "2022-08-08T11:38:11.839462Z",
+     "iopub.status.idle": "2022-08-08T11:38:11.866051Z",
+     "shell.execute_reply": "2022-08-08T11:38:11.864677Z"
+    },
+    "papermill": {
+     "duration": 0.047995,
+     "end_time": "2022-08-08T11:38:11.869290",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:11.821295",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>area_type</th>\n",
+       "      <th>availability</th>\n",
+       "      <th>location</th>\n",
+       "      <th>size</th>\n",
+       "      <th>society</th>\n",
+       "      <th>total_sqft</th>\n",
+       "      <th>bath</th>\n",
+       "      <th>balcony</th>\n",
+       "      <th>price</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Super built-up  Area</td>\n",
+       "      <td>19-Dec</td>\n",
+       "      <td>Electronic City Phase II</td>\n",
+       "      <td>2 BHK</td>\n",
+       "      <td>Coomee</td>\n",
+       "      <td>1056</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>39.07</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Plot  Area</td>\n",
+       "      <td>Ready To Move</td>\n",
+       "      <td>Chikka Tirupathi</td>\n",
+       "      <td>4 Bedroom</td>\n",
+       "      <td>Theanmp</td>\n",
+       "      <td>2600</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>120.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Built-up  Area</td>\n",
+       "      <td>Ready To Move</td>\n",
+       "      <td>Uttarahalli</td>\n",
+       "      <td>3 BHK</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1440</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>62.00</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "              area_type   availability                  location       size  \\\n",
+       "0  Super built-up  Area         19-Dec  Electronic City Phase II      2 BHK   \n",
+       "1            Plot  Area  Ready To Move          Chikka Tirupathi  4 Bedroom   \n",
+       "2        Built-up  Area  Ready To Move               Uttarahalli      3 BHK   \n",
+       "\n",
+       "   society total_sqft  bath  balcony   price  \n",
+       "0  Coomee        1056   2.0      1.0   39.07  \n",
+       "1  Theanmp       2600   5.0      3.0  120.00  \n",
+       "2      NaN       1440   2.0      3.0   62.00  "
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.head(3)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "e4f75f0d",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:11.903299Z",
+     "iopub.status.busy": "2022-08-08T11:38:11.902664Z",
+     "iopub.status.idle": "2022-08-08T11:38:11.909999Z",
+     "shell.execute_reply": "2022-08-08T11:38:11.908672Z"
+    },
+    "papermill": {
+     "duration": 0.027234,
+     "end_time": "2022-08-08T11:38:11.912602",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:11.885368",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(13320, 9)"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "e903bebd",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:11.946495Z",
+     "iopub.status.busy": "2022-08-08T11:38:11.946097Z",
+     "iopub.status.idle": "2022-08-08T11:38:11.983457Z",
+     "shell.execute_reply": "2022-08-08T11:38:11.980760Z"
+    },
+    "papermill": {
+     "duration": 0.058736,
+     "end_time": "2022-08-08T11:38:11.987231",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:11.928495",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 13320 entries, 0 to 13319\n",
+      "Data columns (total 9 columns):\n",
+      " #   Column        Non-Null Count  Dtype  \n",
+      "---  ------        --------------  -----  \n",
+      " 0   area_type     13320 non-null  object \n",
+      " 1   availability  13320 non-null  object \n",
+      " 2   location      13319 non-null  object \n",
+      " 3   size          13304 non-null  object \n",
+      " 4   society       7818 non-null   object \n",
+      " 5   total_sqft    13320 non-null  object \n",
+      " 6   bath          13247 non-null  float64\n",
+      " 7   balcony       12711 non-null  float64\n",
+      " 8   price         13320 non-null  float64\n",
+      "dtypes: float64(3), object(6)\n",
+      "memory usage: 936.7+ KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "data.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "01fd8481",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.022301Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.021298Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.051648Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.049527Z"
+    },
+    "papermill": {
+     "duration": 0.050989,
+     "end_time": "2022-08-08T11:38:12.055056",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.004067",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Super built-up  Area    8790\n",
+      "Built-up  Area          2418\n",
+      "Plot  Area              2025\n",
+      "Carpet  Area              87\n",
+      "Name: area_type, dtype: int64\n",
+      "**************************************************\n",
+      "Ready To Move    10581\n",
+      "18-Dec             307\n",
+      "18-May             295\n",
+      "18-Apr             271\n",
+      "18-Aug             200\n",
+      "                 ...  \n",
+      "15-Aug               1\n",
+      "17-Jan               1\n",
+      "16-Nov               1\n",
+      "16-Jan               1\n",
+      "14-Jul               1\n",
+      "Name: availability, Length: 81, dtype: int64\n",
+      "**************************************************\n",
+      "Whitefield                        540\n",
+      "Sarjapur  Road                    399\n",
+      "Electronic City                   302\n",
+      "Kanakpura Road                    273\n",
+      "Thanisandra                       234\n",
+      "                                 ... \n",
+      "Bapuji Layout                       1\n",
+      "1st Stage Radha Krishna Layout      1\n",
+      "BEML Layout 5th stage               1\n",
+      "singapura paradise                  1\n",
+      "Abshot Layout                       1\n",
+      "Name: location, Length: 1305, dtype: int64\n",
+      "**************************************************\n",
+      "2 BHK         5199\n",
+      "3 BHK         4310\n",
+      "4 Bedroom      826\n",
+      "4 BHK          591\n",
+      "3 Bedroom      547\n",
+      "1 BHK          538\n",
+      "2 Bedroom      329\n",
+      "5 Bedroom      297\n",
+      "6 Bedroom      191\n",
+      "1 Bedroom      105\n",
+      "8 Bedroom       84\n",
+      "7 Bedroom       83\n",
+      "5 BHK           59\n",
+      "9 Bedroom       46\n",
+      "6 BHK           30\n",
+      "7 BHK           17\n",
+      "1 RK            13\n",
+      "10 Bedroom      12\n",
+      "9 BHK            8\n",
+      "8 BHK            5\n",
+      "11 BHK           2\n",
+      "11 Bedroom       2\n",
+      "10 BHK           2\n",
+      "14 BHK           1\n",
+      "13 BHK           1\n",
+      "12 Bedroom       1\n",
+      "27 BHK           1\n",
+      "43 Bedroom       1\n",
+      "16 BHK           1\n",
+      "19 BHK           1\n",
+      "18 Bedroom       1\n",
+      "Name: size, dtype: int64\n",
+      "**************************************************\n",
+      "GrrvaGr    80\n",
+      "PrarePa    76\n",
+      "Sryalan    59\n",
+      "Prtates    59\n",
+      "GMown E    56\n",
+      "           ..\n",
+      "Amionce     1\n",
+      "JaghtDe     1\n",
+      "Jauraht     1\n",
+      "Brity U     1\n",
+      "RSntsAp     1\n",
+      "Name: society, Length: 2688, dtype: int64\n",
+      "**************************************************\n",
+      "1200    843\n",
+      "1100    221\n",
+      "1500    205\n",
+      "2400    196\n",
+      "600     180\n",
+      "       ... \n",
+      "3580      1\n",
+      "2461      1\n",
+      "1437      1\n",
+      "2155      1\n",
+      "4689      1\n",
+      "Name: total_sqft, Length: 2117, dtype: int64\n",
+      "**************************************************\n",
+      "2.0     6908\n",
+      "3.0     3286\n",
+      "4.0     1226\n",
+      "1.0      788\n",
+      "5.0      524\n",
+      "6.0      273\n",
+      "7.0      102\n",
+      "8.0       64\n",
+      "9.0       43\n",
+      "10.0      13\n",
+      "12.0       7\n",
+      "13.0       3\n",
+      "11.0       3\n",
+      "16.0       2\n",
+      "27.0       1\n",
+      "40.0       1\n",
+      "15.0       1\n",
+      "14.0       1\n",
+      "18.0       1\n",
+      "Name: bath, dtype: int64\n",
+      "**************************************************\n",
+      "2.0    5113\n",
+      "1.0    4897\n",
+      "3.0    1672\n",
+      "0.0    1029\n",
+      "Name: balcony, dtype: int64\n",
+      "**************************************************\n",
+      "75.00     310\n",
+      "65.00     302\n",
+      "55.00     275\n",
+      "60.00     270\n",
+      "45.00     240\n",
+      "         ... \n",
+      "351.00      1\n",
+      "54.10       1\n",
+      "80.64       1\n",
+      "32.73       1\n",
+      "488.00      1\n",
+      "Name: price, Length: 1994, dtype: int64\n",
+      "**************************************************\n"
+     ]
+    }
+   ],
+   "source": [
+    "for column in data.columns:\n",
+    "    print(data[column].value_counts())\n",
+    "    print(\"*\"*50)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "a82569cc",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.090899Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.090057Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.104131Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.103032Z"
+    },
+    "papermill": {
+     "duration": 0.034737,
+     "end_time": "2022-08-08T11:38:12.106557",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.071820",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "area_type          0\n",
+       "availability       0\n",
+       "location           1\n",
+       "size              16\n",
+       "society         5502\n",
+       "total_sqft         0\n",
+       "bath              73\n",
+       "balcony          609\n",
+       "price              0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "e823d925",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.142247Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.141401Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.150234Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.149221Z"
+    },
+    "papermill": {
+     "duration": 0.029701,
+     "end_time": "2022-08-08T11:38:12.152892",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.123191",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data.drop(columns=['area_type', 'availability', 'society', 'balcony'], inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "9b3e72c8",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.188431Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.187608Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.213062Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.211691Z"
+    },
+    "papermill": {
+     "duration": 0.046294,
+     "end_time": "2022-08-08T11:38:12.215754",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.169460",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>bath</th>\n",
+       "      <th>price</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>13247.000000</td>\n",
+       "      <td>13320.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>2.692610</td>\n",
+       "      <td>112.565627</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>1.341458</td>\n",
+       "      <td>148.971674</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>8.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>50.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>72.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>120.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>40.000000</td>\n",
+       "      <td>3600.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "               bath         price\n",
+       "count  13247.000000  13320.000000\n",
+       "mean       2.692610    112.565627\n",
+       "std        1.341458    148.971674\n",
+       "min        1.000000      8.000000\n",
+       "25%        2.000000     50.000000\n",
+       "50%        2.000000     72.000000\n",
+       "75%        3.000000    120.000000\n",
+       "max       40.000000   3600.000000"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "3fd28316",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.251824Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.251349Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.268004Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.265680Z"
+    },
+    "papermill": {
+     "duration": 0.039243,
+     "end_time": "2022-08-08T11:38:12.272019",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.232776",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 13320 entries, 0 to 13319\n",
+      "Data columns (total 5 columns):\n",
+      " #   Column      Non-Null Count  Dtype  \n",
+      "---  ------      --------------  -----  \n",
+      " 0   location    13319 non-null  object \n",
+      " 1   size        13304 non-null  object \n",
+      " 2   total_sqft  13320 non-null  object \n",
+      " 3   bath        13247 non-null  float64\n",
+      " 4   price       13320 non-null  float64\n",
+      "dtypes: float64(2), object(3)\n",
+      "memory usage: 520.4+ KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "data.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "5e3210c1",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.308686Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.307878Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.318481Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.317668Z"
+    },
+    "papermill": {
+     "duration": 0.03177,
+     "end_time": "2022-08-08T11:38:12.320798",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.289028",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Whitefield                        540\n",
+       "Sarjapur  Road                    399\n",
+       "Electronic City                   302\n",
+       "Kanakpura Road                    273\n",
+       "Thanisandra                       234\n",
+       "                                 ... \n",
+       "Bapuji Layout                       1\n",
+       "1st Stage Radha Krishna Layout      1\n",
+       "BEML Layout 5th stage               1\n",
+       "singapura paradise                  1\n",
+       "Abshot Layout                       1\n",
+       "Name: location, Length: 1305, dtype: int64"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data['location'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "67f7baae",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.357517Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.356728Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.363007Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.362128Z"
+    },
+    "papermill": {
+     "duration": 0.027248,
+     "end_time": "2022-08-08T11:38:12.365420",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.338172",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data['location']=data['location'].fillna('Sarjapur  Road')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "2d296949",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.402742Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.401974Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.411132Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.410209Z"
+    },
+    "papermill": {
+     "duration": 0.030129,
+     "end_time": "2022-08-08T11:38:12.413480",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.383351",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2 BHK         5199\n",
+       "3 BHK         4310\n",
+       "4 Bedroom      826\n",
+       "4 BHK          591\n",
+       "3 Bedroom      547\n",
+       "1 BHK          538\n",
+       "2 Bedroom      329\n",
+       "5 Bedroom      297\n",
+       "6 Bedroom      191\n",
+       "1 Bedroom      105\n",
+       "8 Bedroom       84\n",
+       "7 Bedroom       83\n",
+       "5 BHK           59\n",
+       "9 Bedroom       46\n",
+       "6 BHK           30\n",
+       "7 BHK           17\n",
+       "1 RK            13\n",
+       "10 Bedroom      12\n",
+       "9 BHK            8\n",
+       "8 BHK            5\n",
+       "11 BHK           2\n",
+       "11 Bedroom       2\n",
+       "10 BHK           2\n",
+       "14 BHK           1\n",
+       "13 BHK           1\n",
+       "12 Bedroom       1\n",
+       "27 BHK           1\n",
+       "43 Bedroom       1\n",
+       "16 BHK           1\n",
+       "19 BHK           1\n",
+       "18 Bedroom       1\n",
+       "Name: size, dtype: int64"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data['size'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "22b6b681",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.449714Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.448955Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.455556Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.454550Z"
+    },
+    "papermill": {
+     "duration": 0.027809,
+     "end_time": "2022-08-08T11:38:12.458129",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.430320",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data['size']=data['size'].fillna('2 BHK')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "1b1f9971",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.497418Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.496702Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.502870Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.501933Z"
+    },
+    "papermill": {
+     "duration": 0.028904,
+     "end_time": "2022-08-08T11:38:12.505311",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.476407",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data['bath']=data['bath'].fillna(data['bath'].median())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "22ec1dd0",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.541874Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.541460Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.552484Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.551076Z"
+    },
+    "papermill": {
+     "duration": 0.032461,
+     "end_time": "2022-08-08T11:38:12.555083",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.522622",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "location      0\n",
+       "size          0\n",
+       "total_sqft    0\n",
+       "bath          0\n",
+       "price         0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "b1c0ed28",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.591003Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.590545Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.619712Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.618296Z"
+    },
+    "papermill": {
+     "duration": 0.050792,
+     "end_time": "2022-08-08T11:38:12.622992",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.572200",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data['bhk']=data['size'].str.split().str.get(0).astype(int)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "80396c06",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.659656Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.659193Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.674571Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.673705Z"
+    },
+    "papermill": {
+     "duration": 0.036861,
+     "end_time": "2022-08-08T11:38:12.676937",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.640076",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>location</th>\n",
+       "      <th>size</th>\n",
+       "      <th>total_sqft</th>\n",
+       "      <th>bath</th>\n",
+       "      <th>price</th>\n",
+       "      <th>bhk</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1718</th>\n",
+       "      <td>2Electronic City Phase II</td>\n",
+       "      <td>27 BHK</td>\n",
+       "      <td>8000</td>\n",
+       "      <td>27.0</td>\n",
+       "      <td>230.0</td>\n",
+       "      <td>27</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4684</th>\n",
+       "      <td>Munnekollal</td>\n",
+       "      <td>43 Bedroom</td>\n",
+       "      <td>2400</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>660.0</td>\n",
+       "      <td>43</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                       location        size total_sqft  bath  price  bhk\n",
+       "1718  2Electronic City Phase II      27 BHK       8000  27.0  230.0   27\n",
+       "4684                Munnekollal  43 Bedroom       2400  40.0  660.0   43"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data[data.bhk>20]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "ca65c329",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.714708Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.714020Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.721601Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.720647Z"
+    },
+    "papermill": {
+     "duration": 0.028314,
+     "end_time": "2022-08-08T11:38:12.723804",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.695490",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['1056', '2600', '1440', ..., '1133 - 1384', '774', '4689'],\n",
+       "      dtype=object)"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data['total_sqft'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "e4649fa4",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.760212Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.759500Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.765293Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.764032Z"
+    },
+    "papermill": {
+     "duration": 0.026894,
+     "end_time": "2022-08-08T11:38:12.767766",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.740872",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "def convertrange(x):\n",
+    "    temp=x.split('-')\n",
+    "    if len(temp)==2:\n",
+    "        return (float(temp[0])+float(temp[1]))/2\n",
+    "    try:\n",
+    "        return float(x)\n",
+    "    except:\n",
+    "        return None"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "9c0a59a4",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.804534Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.803810Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.819966Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.818650Z"
+    },
+    "papermill": {
+     "duration": 0.037522,
+     "end_time": "2022-08-08T11:38:12.822686",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.785164",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data['total_sqft']=data['total_sqft'].apply(convertrange)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "76166422",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.860155Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.859446Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.873268Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.872169Z"
+    },
+    "papermill": {
+     "duration": 0.035081,
+     "end_time": "2022-08-08T11:38:12.875824",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.840743",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>location</th>\n",
+       "      <th>size</th>\n",
+       "      <th>total_sqft</th>\n",
+       "      <th>bath</th>\n",
+       "      <th>price</th>\n",
+       "      <th>bhk</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Electronic City Phase II</td>\n",
+       "      <td>2 BHK</td>\n",
+       "      <td>1056.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>39.07</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Chikka Tirupathi</td>\n",
+       "      <td>4 Bedroom</td>\n",
+       "      <td>2600.0</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>120.00</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Uttarahalli</td>\n",
+       "      <td>3 BHK</td>\n",
+       "      <td>1440.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>62.00</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Lingadheeranahalli</td>\n",
+       "      <td>3 BHK</td>\n",
+       "      <td>1521.0</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>95.00</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Kothanur</td>\n",
+       "      <td>2 BHK</td>\n",
+       "      <td>1200.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>51.00</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   location       size  total_sqft  bath   price  bhk\n",
+       "0  Electronic City Phase II      2 BHK      1056.0   2.0   39.07    2\n",
+       "1          Chikka Tirupathi  4 Bedroom      2600.0   5.0  120.00    4\n",
+       "2               Uttarahalli      3 BHK      1440.0   2.0   62.00    3\n",
+       "3        Lingadheeranahalli      3 BHK      1521.0   3.0   95.00    3\n",
+       "4                  Kothanur      2 BHK      1200.0   2.0   51.00    2"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "ef2df1e5",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.912228Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.911751Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.919502Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.918185Z"
+    },
+    "papermill": {
+     "duration": 0.028935,
+     "end_time": "2022-08-08T11:38:12.922085",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.893150",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data['price_per_sqrt']=data['price']*100000/data['total_sqft']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "0a0dd723",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:12.959880Z",
+     "iopub.status.busy": "2022-08-08T11:38:12.958695Z",
+     "iopub.status.idle": "2022-08-08T11:38:12.970298Z",
+     "shell.execute_reply": "2022-08-08T11:38:12.968991Z"
+    },
+    "papermill": {
+     "duration": 0.032752,
+     "end_time": "2022-08-08T11:38:12.972788",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.940036",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0         3699.810606\n",
+       "1         4615.384615\n",
+       "2         4305.555556\n",
+       "3         6245.890861\n",
+       "4         4250.000000\n",
+       "             ...     \n",
+       "13315     6689.834926\n",
+       "13316    11111.111111\n",
+       "13317     5258.545136\n",
+       "13318    10407.336319\n",
+       "13319     3090.909091\n",
+       "Name: price_per_sqrt, Length: 13320, dtype: float64"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data['price_per_sqrt']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "f5c05df6",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.010462Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.009650Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.042793Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.041482Z"
+    },
+    "papermill": {
+     "duration": 0.054553,
+     "end_time": "2022-08-08T11:38:13.045405",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:12.990852",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>total_sqft</th>\n",
+       "      <th>bath</th>\n",
+       "      <th>price</th>\n",
+       "      <th>bhk</th>\n",
+       "      <th>price_per_sqrt</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>13274.000000</td>\n",
+       "      <td>13320.000000</td>\n",
+       "      <td>13320.000000</td>\n",
+       "      <td>13320.000000</td>\n",
+       "      <td>1.327400e+04</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>1559.626694</td>\n",
+       "      <td>2.688814</td>\n",
+       "      <td>112.565627</td>\n",
+       "      <td>2.802778</td>\n",
+       "      <td>7.907501e+03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>1238.405258</td>\n",
+       "      <td>1.338754</td>\n",
+       "      <td>148.971674</td>\n",
+       "      <td>1.294496</td>\n",
+       "      <td>1.064296e+05</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>8.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>2.678298e+02</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>1100.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>50.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>4.266865e+03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>1276.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>72.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>5.434306e+03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>1680.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>120.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>7.311746e+03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>52272.000000</td>\n",
+       "      <td>40.000000</td>\n",
+       "      <td>3600.000000</td>\n",
+       "      <td>43.000000</td>\n",
+       "      <td>1.200000e+07</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         total_sqft          bath         price           bhk  price_per_sqrt\n",
+       "count  13274.000000  13320.000000  13320.000000  13320.000000    1.327400e+04\n",
+       "mean    1559.626694      2.688814    112.565627      2.802778    7.907501e+03\n",
+       "std     1238.405258      1.338754    148.971674      1.294496    1.064296e+05\n",
+       "min        1.000000      1.000000      8.000000      1.000000    2.678298e+02\n",
+       "25%     1100.000000      2.000000     50.000000      2.000000    4.266865e+03\n",
+       "50%     1276.000000      2.000000     72.000000      3.000000    5.434306e+03\n",
+       "75%     1680.000000      3.000000    120.000000      3.000000    7.311746e+03\n",
+       "max    52272.000000     40.000000   3600.000000     43.000000    1.200000e+07"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "id": "4c5ade02",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.083778Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.082976Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.093998Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.092534Z"
+    },
+    "papermill": {
+     "duration": 0.033506,
+     "end_time": "2022-08-08T11:38:13.096545",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.063039",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Whitefield                        540\n",
+       "Sarjapur  Road                    400\n",
+       "Electronic City                   302\n",
+       "Kanakpura Road                    273\n",
+       "Thanisandra                       234\n",
+       "                                 ... \n",
+       "Bapuji Layout                       1\n",
+       "1st Stage Radha Krishna Layout      1\n",
+       "BEML Layout 5th stage               1\n",
+       "singapura paradise                  1\n",
+       "Abshot Layout                       1\n",
+       "Name: location, Length: 1305, dtype: int64"
+      ]
+     },
+     "execution_count": 26,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data['location'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "5028c984",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.135887Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.134853Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.146256Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.145414Z"
+    },
+    "papermill": {
+     "duration": 0.033825,
+     "end_time": "2022-08-08T11:38:13.148822",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.114997",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data['location']=data['location'].apply(lambda x:x.strip())\n",
+    "location_count = data['location'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "id": "60d2d308",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.186376Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.185575Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.191271Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.190411Z"
+    },
+    "papermill": {
+     "duration": 0.027547,
+     "end_time": "2022-08-08T11:38:13.194065",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.166518",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "location_count_less_10=location_count[location_count<=10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "id": "17b74a40",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.233888Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.233095Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.240972Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.239895Z"
+    },
+    "papermill": {
+     "duration": 0.031031,
+     "end_time": "2022-08-08T11:38:13.243308",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.212277",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Dairy Circle                      10\n",
+       "Nagappa Reddy Layout              10\n",
+       "Basapura                          10\n",
+       "1st Block Koramangala             10\n",
+       "Sector 1 HSR Layout               10\n",
+       "                                  ..\n",
+       "Bapuji Layout                      1\n",
+       "1st Stage Radha Krishna Layout     1\n",
+       "BEML Layout 5th stage              1\n",
+       "singapura paradise                 1\n",
+       "Abshot Layout                      1\n",
+       "Name: location, Length: 1053, dtype: int64"
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "location_count_less_10"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "id": "30f7ccf4",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.282476Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.281721Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.303404Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.301999Z"
+    },
+    "papermill": {
+     "duration": 0.044815,
+     "end_time": "2022-08-08T11:38:13.306508",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.261693",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data['location']=data['location'].apply(lambda x: 'other' if x in location_count_less_10 else x)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "id": "e90d3b46",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.345315Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.344622Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.356398Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.355207Z"
+    },
+    "papermill": {
+     "duration": 0.034624,
+     "end_time": "2022-08-08T11:38:13.358973",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.324349",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "other                 2885\n",
+       "Whitefield             541\n",
+       "Sarjapur  Road         400\n",
+       "Electronic City        304\n",
+       "Kanakpura Road         273\n",
+       "                      ... \n",
+       "Nehru Nagar             11\n",
+       "Banjara Layout          11\n",
+       "LB Shastri Nagar        11\n",
+       "Pattandur Agrahara      11\n",
+       "Narayanapura            11\n",
+       "Name: location, Length: 242, dtype: int64"
+      ]
+     },
+     "execution_count": 31,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data['location'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "03331b38",
+   "metadata": {
+    "papermill": {
+     "duration": 0.017747,
+     "end_time": "2022-08-08T11:38:13.394616",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.376869",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "## Outlier detection"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "id": "280fd5dc",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.433331Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.432704Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.460999Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.460098Z"
+    },
+    "papermill": {
+     "duration": 0.050016,
+     "end_time": "2022-08-08T11:38:13.463319",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.413303",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>total_sqft</th>\n",
+       "      <th>bath</th>\n",
+       "      <th>price</th>\n",
+       "      <th>bhk</th>\n",
+       "      <th>price_per_sqrt</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>13274.000000</td>\n",
+       "      <td>13320.000000</td>\n",
+       "      <td>13320.000000</td>\n",
+       "      <td>13320.000000</td>\n",
+       "      <td>1.327400e+04</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>1559.626694</td>\n",
+       "      <td>2.688814</td>\n",
+       "      <td>112.565627</td>\n",
+       "      <td>2.802778</td>\n",
+       "      <td>7.907501e+03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>1238.405258</td>\n",
+       "      <td>1.338754</td>\n",
+       "      <td>148.971674</td>\n",
+       "      <td>1.294496</td>\n",
+       "      <td>1.064296e+05</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>8.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>2.678298e+02</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>1100.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>50.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>4.266865e+03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>1276.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>72.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>5.434306e+03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>1680.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>120.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>7.311746e+03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>52272.000000</td>\n",
+       "      <td>40.000000</td>\n",
+       "      <td>3600.000000</td>\n",
+       "      <td>43.000000</td>\n",
+       "      <td>1.200000e+07</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         total_sqft          bath         price           bhk  price_per_sqrt\n",
+       "count  13274.000000  13320.000000  13320.000000  13320.000000    1.327400e+04\n",
+       "mean    1559.626694      2.688814    112.565627      2.802778    7.907501e+03\n",
+       "std     1238.405258      1.338754    148.971674      1.294496    1.064296e+05\n",
+       "min        1.000000      1.000000      8.000000      1.000000    2.678298e+02\n",
+       "25%     1100.000000      2.000000     50.000000      2.000000    4.266865e+03\n",
+       "50%     1276.000000      2.000000     72.000000      3.000000    5.434306e+03\n",
+       "75%     1680.000000      3.000000    120.000000      3.000000    7.311746e+03\n",
+       "max    52272.000000     40.000000   3600.000000     43.000000    1.200000e+07"
+      ]
+     },
+     "execution_count": 32,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "id": "3e9a64da",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.502415Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.501052Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.513717Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.512517Z"
+    },
+    "papermill": {
+     "duration": 0.034425,
+     "end_time": "2022-08-08T11:38:13.516110",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.481685",
+     "status": "completed"
+    },
+    "scrolled": true,
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count    13274.000000\n",
+       "mean       575.074878\n",
+       "std        388.205175\n",
+       "min          0.250000\n",
+       "25%        473.333333\n",
+       "50%        552.500000\n",
+       "75%        625.000000\n",
+       "max      26136.000000\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 33,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "(data['total_sqft']/data['bhk']).describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "id": "9221a7d1",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.555419Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.554572Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.562327Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.561397Z"
+    },
+    "papermill": {
+     "duration": 0.030311,
+     "end_time": "2022-08-08T11:38:13.564793",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.534482",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data=data[((data['total_sqft']/data['bhk'])>=300)]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "id": "b4cf893c",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.604819Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.604357Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.637825Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.636512Z"
+    },
+    "papermill": {
+     "duration": 0.056687,
+     "end_time": "2022-08-08T11:38:13.640391",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.583704",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>total_sqft</th>\n",
+       "      <th>bath</th>\n",
+       "      <th>price</th>\n",
+       "      <th>bhk</th>\n",
+       "      <th>price_per_sqrt</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>12530.000000</td>\n",
+       "      <td>12530.000000</td>\n",
+       "      <td>12530.000000</td>\n",
+       "      <td>12530.000000</td>\n",
+       "      <td>12530.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>1594.564544</td>\n",
+       "      <td>2.559537</td>\n",
+       "      <td>111.382401</td>\n",
+       "      <td>2.650838</td>\n",
+       "      <td>6303.979357</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>1261.271296</td>\n",
+       "      <td>1.077938</td>\n",
+       "      <td>152.077329</td>\n",
+       "      <td>0.976678</td>\n",
+       "      <td>4162.237981</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>300.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>8.440000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>267.829813</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>1116.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>49.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>4210.526316</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>1300.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>70.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>5294.117647</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>1700.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>115.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>6916.666667</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>52272.000000</td>\n",
+       "      <td>16.000000</td>\n",
+       "      <td>3600.000000</td>\n",
+       "      <td>16.000000</td>\n",
+       "      <td>176470.588235</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         total_sqft          bath         price           bhk  price_per_sqrt\n",
+       "count  12530.000000  12530.000000  12530.000000  12530.000000    12530.000000\n",
+       "mean    1594.564544      2.559537    111.382401      2.650838     6303.979357\n",
+       "std     1261.271296      1.077938    152.077329      0.976678     4162.237981\n",
+       "min      300.000000      1.000000      8.440000      1.000000      267.829813\n",
+       "25%     1116.000000      2.000000     49.000000      2.000000     4210.526316\n",
+       "50%     1300.000000      2.000000     70.000000      3.000000     5294.117647\n",
+       "75%     1700.000000      3.000000    115.000000      3.000000     6916.666667\n",
+       "max    52272.000000     16.000000   3600.000000     16.000000   176470.588235"
+      ]
+     },
+     "execution_count": 35,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "id": "e6c8e870",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.679506Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.679091Z",
+     "iopub.status.idle": "2022-08-08T11:38:13.685387Z",
+     "shell.execute_reply": "2022-08-08T11:38:13.684567Z"
+    },
+    "papermill": {
+     "duration": 0.028144,
+     "end_time": "2022-08-08T11:38:13.687386",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.659242",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(12530, 7)"
+      ]
+     },
+     "execution_count": 36,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "id": "b7c9607a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:13.726786Z",
+     "iopub.status.busy": "2022-08-08T11:38:13.726338Z",
+     "iopub.status.idle": "2022-08-08T11:38:14.299655Z",
+     "shell.execute_reply": "2022-08-08T11:38:14.297931Z"
+    },
+    "papermill": {
+     "duration": 0.596341,
+     "end_time": "2022-08-08T11:38:14.302550",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:13.706209",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>total_sqft</th>\n",
+       "      <th>bath</th>\n",
+       "      <th>price</th>\n",
+       "      <th>bhk</th>\n",
+       "      <th>price_per_sqrt</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>10301.000000</td>\n",
+       "      <td>10301.000000</td>\n",
+       "      <td>10301.000000</td>\n",
+       "      <td>10301.000000</td>\n",
+       "      <td>10301.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>1508.440608</td>\n",
+       "      <td>2.471702</td>\n",
+       "      <td>91.286372</td>\n",
+       "      <td>2.574896</td>\n",
+       "      <td>5659.062876</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>880.694214</td>\n",
+       "      <td>0.979449</td>\n",
+       "      <td>86.342786</td>\n",
+       "      <td>0.897649</td>\n",
+       "      <td>2265.774749</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>300.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>10.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1250.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>1110.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>49.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>4244.897959</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>1286.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>67.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>5175.600739</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>1650.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>100.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>6428.571429</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>30400.000000</td>\n",
+       "      <td>16.000000</td>\n",
+       "      <td>2200.000000</td>\n",
+       "      <td>16.000000</td>\n",
+       "      <td>24509.803922</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         total_sqft          bath         price           bhk  price_per_sqrt\n",
+       "count  10301.000000  10301.000000  10301.000000  10301.000000    10301.000000\n",
+       "mean    1508.440608      2.471702     91.286372      2.574896     5659.062876\n",
+       "std      880.694214      0.979449     86.342786      0.897649     2265.774749\n",
+       "min      300.000000      1.000000     10.000000      1.000000     1250.000000\n",
+       "25%     1110.000000      2.000000     49.000000      2.000000     4244.897959\n",
+       "50%     1286.000000      2.000000     67.000000      2.000000     5175.600739\n",
+       "75%     1650.000000      3.000000    100.000000      3.000000     6428.571429\n",
+       "max    30400.000000     16.000000   2200.000000     16.000000    24509.803922"
+      ]
+     },
+     "execution_count": 37,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "def remove_outliers_sqft(df):\n",
+    "    df_output = pd.DataFrame()\n",
+    "    for key, subdf in df.groupby('location'):\n",
+    "        m = np.mean(subdf.price_per_sqrt)\n",
+    "        st = np.std(subdf.price_per_sqrt)\n",
+    "        gen_df = subdf[(subdf.price_per_sqrt>(m-st))&(subdf.price_per_sqrt<=(m+st))]\n",
+    "        df_output=pd.concat([df_output, gen_df], ignore_index=True)\n",
+    "    return df_output\n",
+    "data=remove_outliers_sqft(data)\n",
+    "data.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "id": "e3b0ce5e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:14.342814Z",
+     "iopub.status.busy": "2022-08-08T11:38:14.342364Z",
+     "iopub.status.idle": "2022-08-08T11:38:14.351467Z",
+     "shell.execute_reply": "2022-08-08T11:38:14.349966Z"
+    },
+    "papermill": {
+     "duration": 0.032091,
+     "end_time": "2022-08-08T11:38:14.354165",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:14.322074",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "def bhk_outlier_remove(df):\n",
+    "    exclude_indices=np.array([])\n",
+    "    for location, location_df in df.groupby('location'):\n",
+    "        bhk_stats = {}\n",
+    "        for bhk, bhk_df in location_df.groupby('bhk'):\n",
+    "            bhk_stats[bhk]={\n",
+    "                'mean':np.mean(bhk_df.price_per_sqrt),\n",
+    "                'std':np.std(bhk_df.price_per_sqrt),\n",
+    "                'count':bhk_df.shape[0]\n",
+    "            }\n",
+    "            \n",
+    "        for bhk, bhk_df in location_df.groupby('bhk'):\n",
+    "            stats=bhk_stats.get(bhk-1)\n",
+    "            if stats and stats['count']>5:\n",
+    "                exclude_indices=np.append(exclude_indices, bhk_df[bhk_df.price_per_sqrt<(stats['mean'])].index.values)\n",
+    "    return df.drop(exclude_indices, axis='index')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "id": "9ab3b915",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:14.394060Z",
+     "iopub.status.busy": "2022-08-08T11:38:14.393626Z",
+     "iopub.status.idle": "2022-08-08T11:38:15.185629Z",
+     "shell.execute_reply": "2022-08-08T11:38:15.184473Z"
+    },
+    "papermill": {
+     "duration": 0.814973,
+     "end_time": "2022-08-08T11:38:15.188459",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:14.373486",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data=bhk_outlier_remove(data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "id": "07bf20bb",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:15.229022Z",
+     "iopub.status.busy": "2022-08-08T11:38:15.228564Z",
+     "iopub.status.idle": "2022-08-08T11:38:15.250611Z",
+     "shell.execute_reply": "2022-08-08T11:38:15.249157Z"
+    },
+    "papermill": {
+     "duration": 0.045237,
+     "end_time": "2022-08-08T11:38:15.253071",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:15.207834",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>location</th>\n",
+       "      <th>size</th>\n",
+       "      <th>total_sqft</th>\n",
+       "      <th>bath</th>\n",
+       "      <th>price</th>\n",
+       "      <th>bhk</th>\n",
+       "      <th>price_per_sqrt</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1st Block Jayanagar</td>\n",
+       "      <td>4 BHK</td>\n",
+       "      <td>2850.0</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>428.0</td>\n",
+       "      <td>4</td>\n",
+       "      <td>15017.543860</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1st Block Jayanagar</td>\n",
+       "      <td>3 BHK</td>\n",
+       "      <td>1630.0</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>194.0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>11901.840491</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1st Block Jayanagar</td>\n",
+       "      <td>3 BHK</td>\n",
+       "      <td>1875.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>235.0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>12533.333333</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1st Block Jayanagar</td>\n",
+       "      <td>3 BHK</td>\n",
+       "      <td>1200.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>130.0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>10833.333333</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1st Block Jayanagar</td>\n",
+       "      <td>2 BHK</td>\n",
+       "      <td>1235.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>148.0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>11983.805668</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10292</th>\n",
+       "      <td>other</td>\n",
+       "      <td>2 BHK</td>\n",
+       "      <td>1200.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>70.0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>5833.333333</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10293</th>\n",
+       "      <td>other</td>\n",
+       "      <td>1 BHK</td>\n",
+       "      <td>1800.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>200.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>11111.111111</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10296</th>\n",
+       "      <td>other</td>\n",
+       "      <td>2 BHK</td>\n",
+       "      <td>1353.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>110.0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>8130.081301</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10297</th>\n",
+       "      <td>other</td>\n",
+       "      <td>1 Bedroom</td>\n",
+       "      <td>812.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>26.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3201.970443</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10300</th>\n",
+       "      <td>other</td>\n",
+       "      <td>4 BHK</td>\n",
+       "      <td>3600.0</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>400.0</td>\n",
+       "      <td>4</td>\n",
+       "      <td>11111.111111</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>7360 rows × 7 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                  location       size  total_sqft  bath  price  bhk  \\\n",
+       "0      1st Block Jayanagar      4 BHK      2850.0   4.0  428.0    4   \n",
+       "1      1st Block Jayanagar      3 BHK      1630.0   3.0  194.0    3   \n",
+       "2      1st Block Jayanagar      3 BHK      1875.0   2.0  235.0    3   \n",
+       "3      1st Block Jayanagar      3 BHK      1200.0   2.0  130.0    3   \n",
+       "4      1st Block Jayanagar      2 BHK      1235.0   2.0  148.0    2   \n",
+       "...                    ...        ...         ...   ...    ...  ...   \n",
+       "10292                other      2 BHK      1200.0   2.0   70.0    2   \n",
+       "10293                other      1 BHK      1800.0   1.0  200.0    1   \n",
+       "10296                other      2 BHK      1353.0   2.0  110.0    2   \n",
+       "10297                other  1 Bedroom       812.0   1.0   26.0    1   \n",
+       "10300                other      4 BHK      3600.0   5.0  400.0    4   \n",
+       "\n",
+       "       price_per_sqrt  \n",
+       "0        15017.543860  \n",
+       "1        11901.840491  \n",
+       "2        12533.333333  \n",
+       "3        10833.333333  \n",
+       "4        11983.805668  \n",
+       "...               ...  \n",
+       "10292     5833.333333  \n",
+       "10293    11111.111111  \n",
+       "10296     8130.081301  \n",
+       "10297     3201.970443  \n",
+       "10300    11111.111111  \n",
+       "\n",
+       "[7360 rows x 7 columns]"
+      ]
+     },
+     "execution_count": 40,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "id": "6b9e1529",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:15.293697Z",
+     "iopub.status.busy": "2022-08-08T11:38:15.292839Z",
+     "iopub.status.idle": "2022-08-08T11:38:15.299500Z",
+     "shell.execute_reply": "2022-08-08T11:38:15.298714Z"
+    },
+    "papermill": {
+     "duration": 0.029336,
+     "end_time": "2022-08-08T11:38:15.301719",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:15.272383",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(7360, 7)"
+      ]
+     },
+     "execution_count": 41,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "id": "cc005e46",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:15.343527Z",
+     "iopub.status.busy": "2022-08-08T11:38:15.342802Z",
+     "iopub.status.idle": "2022-08-08T11:38:15.349763Z",
+     "shell.execute_reply": "2022-08-08T11:38:15.348607Z"
+    },
+    "papermill": {
+     "duration": 0.030397,
+     "end_time": "2022-08-08T11:38:15.352177",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:15.321780",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data.drop(columns=['size', 'price_per_sqrt'], inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "id": "7b2d4e59",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:15.392840Z",
+     "iopub.status.busy": "2022-08-08T11:38:15.392164Z",
+     "iopub.status.idle": "2022-08-08T11:38:15.405957Z",
+     "shell.execute_reply": "2022-08-08T11:38:15.404921Z"
+    },
+    "papermill": {
+     "duration": 0.036784,
+     "end_time": "2022-08-08T11:38:15.408355",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:15.371571",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>location</th>\n",
+       "      <th>total_sqft</th>\n",
+       "      <th>bath</th>\n",
+       "      <th>price</th>\n",
+       "      <th>bhk</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1st Block Jayanagar</td>\n",
+       "      <td>2850.0</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>428.0</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1st Block Jayanagar</td>\n",
+       "      <td>1630.0</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>194.0</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1st Block Jayanagar</td>\n",
+       "      <td>1875.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>235.0</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1st Block Jayanagar</td>\n",
+       "      <td>1200.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>130.0</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1st Block Jayanagar</td>\n",
+       "      <td>1235.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>148.0</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "              location  total_sqft  bath  price  bhk\n",
+       "0  1st Block Jayanagar      2850.0   4.0  428.0    4\n",
+       "1  1st Block Jayanagar      1630.0   3.0  194.0    3\n",
+       "2  1st Block Jayanagar      1875.0   2.0  235.0    3\n",
+       "3  1st Block Jayanagar      1200.0   2.0  130.0    3\n",
+       "4  1st Block Jayanagar      1235.0   2.0  148.0    2"
+      ]
+     },
+     "execution_count": 43,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "id": "87d2d0c8",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:15.449303Z",
+     "iopub.status.busy": "2022-08-08T11:38:15.448615Z",
+     "iopub.status.idle": "2022-08-08T11:38:15.482105Z",
+     "shell.execute_reply": "2022-08-08T11:38:15.480799Z"
+    },
+    "papermill": {
+     "duration": 0.05696,
+     "end_time": "2022-08-08T11:38:15.484709",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:15.427749",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data.to_csv('Cleaned_data.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "id": "c882763a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:15.525120Z",
+     "iopub.status.busy": "2022-08-08T11:38:15.524706Z",
+     "iopub.status.idle": "2022-08-08T11:38:15.531741Z",
+     "shell.execute_reply": "2022-08-08T11:38:15.530649Z"
+    },
+    "papermill": {
+     "duration": 0.030144,
+     "end_time": "2022-08-08T11:38:15.534304",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:15.504160",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "X = data.drop(columns=['price'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "id": "d93fb875",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:15.575240Z",
+     "iopub.status.busy": "2022-08-08T11:38:15.574830Z",
+     "iopub.status.idle": "2022-08-08T11:38:15.579471Z",
+     "shell.execute_reply": "2022-08-08T11:38:15.578572Z"
+    },
+    "papermill": {
+     "duration": 0.027574,
+     "end_time": "2022-08-08T11:38:15.581459",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:15.553885",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "y = data['price']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "id": "c8f75171",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:15.622670Z",
+     "iopub.status.busy": "2022-08-08T11:38:15.621953Z",
+     "iopub.status.idle": "2022-08-08T11:38:16.962530Z",
+     "shell.execute_reply": "2022-08-08T11:38:16.961220Z"
+    },
+    "papermill": {
+     "duration": 1.364593,
+     "end_time": "2022-08-08T11:38:16.965446",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:15.600853",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.linear_model import LinearRegression, Lasso, Ridge\n",
+    "from sklearn.preprocessing import OneHotEncoder, StandardScaler\n",
+    "from sklearn.compose import make_column_transformer\n",
+    "from sklearn.pipeline import make_pipeline\n",
+    "from sklearn.metrics import r2_score"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "id": "5466845d",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:17.013191Z",
+     "iopub.status.busy": "2022-08-08T11:38:17.012613Z",
+     "iopub.status.idle": "2022-08-08T11:38:17.020251Z",
+     "shell.execute_reply": "2022-08-08T11:38:17.019406Z"
+    },
+    "papermill": {
+     "duration": 0.036322,
+     "end_time": "2022-08-08T11:38:17.022569",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:16.986247",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=3)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "id": "daa63008",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:17.063785Z",
+     "iopub.status.busy": "2022-08-08T11:38:17.063338Z",
+     "iopub.status.idle": "2022-08-08T11:38:17.070261Z",
+     "shell.execute_reply": "2022-08-08T11:38:17.069030Z"
+    },
+    "papermill": {
+     "duration": 0.030643,
+     "end_time": "2022-08-08T11:38:17.072543",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.041900",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(5888, 4)"
+      ]
+     },
+     "execution_count": 49,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "X_train.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "id": "6d7234e1",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:17.115734Z",
+     "iopub.status.busy": "2022-08-08T11:38:17.113672Z",
+     "iopub.status.idle": "2022-08-08T11:38:17.122348Z",
+     "shell.execute_reply": "2022-08-08T11:38:17.120957Z"
+    },
+    "papermill": {
+     "duration": 0.032104,
+     "end_time": "2022-08-08T11:38:17.124996",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.092892",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(1472, 4)"
+      ]
+     },
+     "execution_count": 50,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "X_test.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "49fb4b96",
+   "metadata": {
+    "papermill": {
+     "duration": 0.019174,
+     "end_time": "2022-08-08T11:38:17.163659",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.144485",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "## Building Model using Linear Regression"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "id": "1db45d03",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:17.204888Z",
+     "iopub.status.busy": "2022-08-08T11:38:17.204483Z",
+     "iopub.status.idle": "2022-08-08T11:38:17.209680Z",
+     "shell.execute_reply": "2022-08-08T11:38:17.208390Z"
+    },
+    "papermill": {
+     "duration": 0.029246,
+     "end_time": "2022-08-08T11:38:17.212192",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.182946",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "column_trans = make_column_transformer((OneHotEncoder(sparse=False), ['location']), remainder='passthrough')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "id": "40124afa",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:17.255739Z",
+     "iopub.status.busy": "2022-08-08T11:38:17.255292Z",
+     "iopub.status.idle": "2022-08-08T11:38:17.260657Z",
+     "shell.execute_reply": "2022-08-08T11:38:17.259314Z"
+    },
+    "papermill": {
+     "duration": 0.029546,
+     "end_time": "2022-08-08T11:38:17.263103",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.233557",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "scaler = StandardScaler()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "id": "8efcab5e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:17.306370Z",
+     "iopub.status.busy": "2022-08-08T11:38:17.305970Z",
+     "iopub.status.idle": "2022-08-08T11:38:17.311165Z",
+     "shell.execute_reply": "2022-08-08T11:38:17.309830Z"
+    },
+    "papermill": {
+     "duration": 0.02891,
+     "end_time": "2022-08-08T11:38:17.313713",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.284803",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "lr = LinearRegression(normalize=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "id": "0928d0bd",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:17.354496Z",
+     "iopub.status.busy": "2022-08-08T11:38:17.353577Z",
+     "iopub.status.idle": "2022-08-08T11:38:17.359389Z",
+     "shell.execute_reply": "2022-08-08T11:38:17.358469Z"
+    },
+    "papermill": {
+     "duration": 0.028781,
+     "end_time": "2022-08-08T11:38:17.361876",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.333095",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "pipe = make_pipeline(column_trans, scaler, lr)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "id": "dd130df4",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:17.403835Z",
+     "iopub.status.busy": "2022-08-08T11:38:17.403023Z",
+     "iopub.status.idle": "2022-08-08T11:38:17.628667Z",
+     "shell.execute_reply": "2022-08-08T11:38:17.627060Z"
+    },
+    "papermill": {
+     "duration": 0.252293,
+     "end_time": "2022-08-08T11:38:17.634549",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.382256",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/opt/conda/lib/python3.7/site-packages/sklearn/linear_model/_base.py:145: FutureWarning: 'normalize' was deprecated in version 1.0 and will be removed in 1.2.\n",
+      "If you wish to scale the data, use Pipeline with a StandardScaler in a preprocessing stage. To reproduce the previous behavior:\n",
+      "\n",
+      "from sklearn.pipeline import make_pipeline\n",
+      "\n",
+      "model = make_pipeline(StandardScaler(with_mean=False), LinearRegression())\n",
+      "\n",
+      "If you wish to pass a sample_weight parameter, you need to pass it as a fit parameter to each step of the pipeline as follows:\n",
+      "\n",
+      "kwargs = {s[0] + '__sample_weight': sample_weight for s in model.steps}\n",
+      "model.fit(X, y, **kwargs)\n",
+      "\n",
+      "\n",
+      "  FutureWarning,\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "Pipeline(steps=[('columntransformer',\n",
+       "                 ColumnTransformer(remainder='passthrough',\n",
+       "                                   transformers=[('onehotencoder',\n",
+       "                                                  OneHotEncoder(sparse=False),\n",
+       "                                                  ['location'])])),\n",
+       "                ('standardscaler', StandardScaler()),\n",
+       "                ('linearregression', LinearRegression(normalize=True))])"
+      ]
+     },
+     "execution_count": 55,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pipe.fit(X_train, y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 56,
+   "id": "aa649966",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:17.725132Z",
+     "iopub.status.busy": "2022-08-08T11:38:17.724756Z",
+     "iopub.status.idle": "2022-08-08T11:38:17.741677Z",
+     "shell.execute_reply": "2022-08-08T11:38:17.740065Z"
+    },
+    "papermill": {
+     "duration": 0.06031,
+     "end_time": "2022-08-08T11:38:17.746825",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.686515",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "y_pred_lr = pipe.predict(X_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "id": "66bdfc51",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:17.858319Z",
+     "iopub.status.busy": "2022-08-08T11:38:17.857604Z",
+     "iopub.status.idle": "2022-08-08T11:38:17.867634Z",
+     "shell.execute_reply": "2022-08-08T11:38:17.866677Z"
+    },
+    "papermill": {
+     "duration": 0.069598,
+     "end_time": "2022-08-08T11:38:17.870002",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.800404",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.8019567224265891"
+      ]
+     },
+     "execution_count": 57,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "r2_score(y_test, y_pred_lr)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3d21ff96",
+   "metadata": {
+    "papermill": {
+     "duration": 0.019888,
+     "end_time": "2022-08-08T11:38:17.910743",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.890855",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "## Applying Lasso"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "id": "09b5bf79",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:17.952900Z",
+     "iopub.status.busy": "2022-08-08T11:38:17.951758Z",
+     "iopub.status.idle": "2022-08-08T11:38:17.957487Z",
+     "shell.execute_reply": "2022-08-08T11:38:17.956594Z"
+    },
+    "papermill": {
+     "duration": 0.029377,
+     "end_time": "2022-08-08T11:38:17.959949",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.930572",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "lasso = Lasso()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "id": "d053c100",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:18.002453Z",
+     "iopub.status.busy": "2022-08-08T11:38:18.001628Z",
+     "iopub.status.idle": "2022-08-08T11:38:18.007940Z",
+     "shell.execute_reply": "2022-08-08T11:38:18.006675Z"
+    },
+    "papermill": {
+     "duration": 0.030367,
+     "end_time": "2022-08-08T11:38:18.010495",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:17.980128",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "pipe = make_pipeline(column_trans, scaler, lasso)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 60,
+   "id": "ece42004",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:18.052626Z",
+     "iopub.status.busy": "2022-08-08T11:38:18.051867Z",
+     "iopub.status.idle": "2022-08-08T11:38:18.149235Z",
+     "shell.execute_reply": "2022-08-08T11:38:18.147649Z"
+    },
+    "papermill": {
+     "duration": 0.122993,
+     "end_time": "2022-08-08T11:38:18.153517",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:18.030524",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Pipeline(steps=[('columntransformer',\n",
+       "                 ColumnTransformer(remainder='passthrough',\n",
+       "                                   transformers=[('onehotencoder',\n",
+       "                                                  OneHotEncoder(sparse=False),\n",
+       "                                                  ['location'])])),\n",
+       "                ('standardscaler', StandardScaler()), ('lasso', Lasso())])"
+      ]
+     },
+     "execution_count": 60,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pipe.fit(X_train, y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "id": "96dbce73",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:18.256521Z",
+     "iopub.status.busy": "2022-08-08T11:38:18.256116Z",
+     "iopub.status.idle": "2022-08-08T11:38:18.278436Z",
+     "shell.execute_reply": "2022-08-08T11:38:18.276829Z"
+    },
+    "papermill": {
+     "duration": 0.07776,
+     "end_time": "2022-08-08T11:38:18.284504",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:18.206744",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "y_pred_lasso = pipe.predict(X_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 62,
+   "id": "63b0d062",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:18.395491Z",
+     "iopub.status.busy": "2022-08-08T11:38:18.394520Z",
+     "iopub.status.idle": "2022-08-08T11:38:18.403191Z",
+     "shell.execute_reply": "2022-08-08T11:38:18.402315Z"
+    },
+    "papermill": {
+     "duration": 0.068334,
+     "end_time": "2022-08-08T11:38:18.405532",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:18.337198",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.7901481511894175"
+      ]
+     },
+     "execution_count": 62,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "r2_score(y_test, y_pred_lasso)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bae7aeda",
+   "metadata": {
+    "papermill": {
+     "duration": 0.0204,
+     "end_time": "2022-08-08T11:38:18.446821",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:18.426421",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "## Applying Ridge"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "id": "5f2e20bf",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:18.489909Z",
+     "iopub.status.busy": "2022-08-08T11:38:18.489468Z",
+     "iopub.status.idle": "2022-08-08T11:38:18.494664Z",
+     "shell.execute_reply": "2022-08-08T11:38:18.493483Z"
+    },
+    "papermill": {
+     "duration": 0.030047,
+     "end_time": "2022-08-08T11:38:18.497344",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:18.467297",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "ridge = Ridge()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "id": "a5c98129",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:18.539650Z",
+     "iopub.status.busy": "2022-08-08T11:38:18.539181Z",
+     "iopub.status.idle": "2022-08-08T11:38:18.544810Z",
+     "shell.execute_reply": "2022-08-08T11:38:18.543432Z"
+    },
+    "papermill": {
+     "duration": 0.029611,
+     "end_time": "2022-08-08T11:38:18.547354",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:18.517743",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "pipe = make_pipeline(column_trans, scaler, ridge)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 65,
+   "id": "2ba65d6e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:18.595162Z",
+     "iopub.status.busy": "2022-08-08T11:38:18.594743Z",
+     "iopub.status.idle": "2022-08-08T11:38:18.702153Z",
+     "shell.execute_reply": "2022-08-08T11:38:18.700608Z"
+    },
+    "papermill": {
+     "duration": 0.138018,
+     "end_time": "2022-08-08T11:38:18.706344",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:18.568326",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Pipeline(steps=[('columntransformer',\n",
+       "                 ColumnTransformer(remainder='passthrough',\n",
+       "                                   transformers=[('onehotencoder',\n",
+       "                                                  OneHotEncoder(sparse=False),\n",
+       "                                                  ['location'])])),\n",
+       "                ('standardscaler', StandardScaler()), ('ridge', Ridge())])"
+      ]
+     },
+     "execution_count": 65,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pipe.fit(X_train, y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "id": "ad7ffd9c",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:18.823196Z",
+     "iopub.status.busy": "2022-08-08T11:38:18.822777Z",
+     "iopub.status.idle": "2022-08-08T11:38:18.847014Z",
+     "shell.execute_reply": "2022-08-08T11:38:18.845277Z"
+    },
+    "papermill": {
+     "duration": 0.056575,
+     "end_time": "2022-08-08T11:38:18.852570",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:18.795995",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "y_pred_ridge = pipe.predict(X_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "id": "a2905f31",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:18.965402Z",
+     "iopub.status.busy": "2022-08-08T11:38:18.964967Z",
+     "iopub.status.idle": "2022-08-08T11:38:18.973414Z",
+     "shell.execute_reply": "2022-08-08T11:38:18.972462Z"
+    },
+    "papermill": {
+     "duration": 0.067824,
+     "end_time": "2022-08-08T11:38:18.975990",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:18.908166",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.8018774222146575"
+      ]
+     },
+     "execution_count": 67,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "r2_score(y_test, y_pred_ridge)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 68,
+   "id": "314c150e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2022-08-08T11:38:19.019297Z",
+     "iopub.status.busy": "2022-08-08T11:38:19.018249Z",
+     "iopub.status.idle": "2022-08-08T11:38:19.029039Z",
+     "shell.execute_reply": "2022-08-08T11:38:19.027542Z"
+    },
+    "papermill": {
+     "duration": 0.035305,
+     "end_time": "2022-08-08T11:38:19.031433",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:18.996128",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "No Regularization :  0.8019567224265891\n",
+      "Lasso Regularization :  0.7901481511894175\n",
+      "Ridge Regularization :  0.8018774222146575\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('No Regularization : ', r2_score(y_test, y_pred_lr))\n",
+    "print('Lasso Regularization : ', r2_score(y_test, y_pred_lasso))\n",
+    "print('Ridge Regularization : ', r2_score(y_test, y_pred_ridge))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "36206fc2",
+   "metadata": {
+    "papermill": {
+     "duration": 0.020279,
+     "end_time": "2022-08-08T11:38:19.072892",
+     "exception": false,
+     "start_time": "2022-08-08T11:38:19.052613",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.12"
+  },
+  "papermill": {
+   "default_parameters": {},
+   "duration": 19.010787,
+   "end_time": "2022-08-08T11:38:19.917771",
+   "environment_variables": {},
+   "exception": null,
+   "input_path": "__notebook__.ipynb",
+   "output_path": "__notebook__.ipynb",
+   "parameters": {},
+   "start_time": "2022-08-08T11:38:00.906984",
+   "version": "2.3.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
